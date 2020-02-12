@@ -27,7 +27,7 @@ def action_one():
 
 '''
 python实现pagerank计算过程
-通过参数d来控制哪种模式d=1为简单模式 d<0.85 为随机模式
+通过参数d来控制哪种模式d=1为简单模式 d<1 为随机模式
 '''
 def action_one_pagerank(d):
     import numpy as np
