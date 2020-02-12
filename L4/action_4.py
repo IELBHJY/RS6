@@ -5,8 +5,11 @@ Action2：使用TextRank对新闻进行关键词提取，及文章摘要输出
 '''
 import networkx as nx
 
+'''
+基于networkx库实现pagerank
+'''
 def action_one():
-    edges=[['A','B'],['B','C'],['A','F'],['A','D'],
+    edges=[['A','B'],['B','C'],['A','F'],['A','D'],['A','E'],
            ['C','E'],['D','A'],['D','C'],['D','E'],
            ['E','C'],['E','B'],['F','D']]
     graph=nx.DiGraph()
@@ -16,10 +19,30 @@ def action_one():
     print("edge num:",graph.number_of_edges())
     rank_list1 = nx.pagerank(graph,alpha=1,max_iter=100)
     print("简化模型结果：",rank_list1)
-    print(sorted(rank_list1,reverse=True))
+    print(sorted(rank_list1.items(),key= lambda item:item[1],reverse=True))
+
     rank_list2 = nx.pagerank(graph,alpha=0.85,max_iter=100)
     print("随机模型结果：",rank_list2)
-    print(sorted(rank_list2,reverse=True))
+    print(sorted(rank_list2.items(),key= lambda item:item[1],reverse=True))
+
+'''
+python实现pagerank计算过程
+通过参数d来控制哪种模式d=1为简单模式 d<0.85 为随机模式
+'''
+def action_one_pagerank(d):
+    import numpy as np
+    M = np.array([[0,0,0,1/3,0,0],
+                  [1/4,0,0,0,1/2,0],
+                  [0,1,0,1/3,1/2,0],
+                  [1/4,0,0,0,0,1],
+                  [1/4,0,1,1/3,0,0],
+                  [1/4,0,0,0,0,0]],dtype=np.float)
+    print(M)
+    b=np.array([1/6,1/6,1/6,1/6,1/6,1/6],dtype=np.float)
+    w = b
+    for i in range(100):
+        w = (1-d) / M.shape[0] + d * np.dot(M, w)
+        print(w)
 
 
 def action_two():
@@ -44,6 +67,8 @@ def action_two():
 
 if __name__ == '__main__':
     action_one()
+    action_one_pagerank(1)
+    action_one_pagerank(0.85)
     action_two()
 
 
