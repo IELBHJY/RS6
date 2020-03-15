@@ -1,0 +1,37 @@
+Thinking1：在CTR点击率预估中，使用GBDT+LR的原理是什么？
+A:GBDT + LR 是facebook2014年提出来的模型，其原理是利用GBDT构造特征，然后传入LR进行预估。
+GBDT是一种boosting性质的算法，多棵卡特树一起预测，第n+1棵树以第n棵树的残差作为优化目标。每棵卡特树依据某个特征的
+范围划分进行branch，最后落到叶子结点后，根据均值确定最后的输出值。其中特征选择以及特征范围划分采用枚举的形式确定，因此
+树的深度越大，耗时呈指数增长。GBDT训练完，把每个叶子结点的情况作为出入传给LR进行训练，所以GBDT作用在于构造新的特征。
+
+Thinking2：Wide & Deep的模型结构是怎样的，为什么能具备记忆和泛化能力（memorization and generalization）
+A：Wide & Deep 是Google2016年提出来的模型。
+Wide 是广义线性模型，输入主要是原始特征和交叉特征，我们可以通过不同特征之间的两两组合来构造新的交叉特征。
+所以Wide模型的先将input的特征通过Wx+b得到score，然后在通过类似sigmoid函数得到probabilty。
+线性模型的好处，就是输入信息对最终结果产生直接影响，称为记忆能力。
+
+Deep就是一个DNN模型，深度模型的好处就是能挖掘更深层次的信息，有更好的表达能力，称为泛化能力。(为啥深度模型可以挖掘更深层次的信息)
+
+Thinking3：在CTR预估中，使用FM与DNN结合的方式，有哪些结合的方式，代表模型有哪些？
+A：FNN：FM对embedding层进行初始化，然后进行DNN部分。
+DeepFM：将Wide & Deep中的Wide替换成FM。
+NFM 将FM输出作为DNN输入，embedding直接采用对位相乘后相加作为交叉特征（这部分是FM实现的吗？）
+
+Thinking4：Surprise工具中的baseline算法原理是怎样的？BaselineOnly和KNNBaseline有什么区别？
+A：baseline思想是r_ui = u + b_u + b_i,其中u是存在数据的平均分数，加上user的个人偏好，加上item的自身加分或减分
+KNNBaseline思想在计算user u 和 user v相似度时考虑了user v 对item的偏差情况
+
+Thinking5：GBDT和随机森林都是基于树的算法，它们有什么区别？
+A：随机森林是多棵决策树的集成，结果采用投票的方式，分类是多数服从少数，回归是每个基模型均值。
+随机森林是采用bagging的思想，每次训练的时候随机从训练数据中选择部分数据。
+
+GBDT是boosting的思想，第n+1棵树是利用第n棵树的残差优化的，所以GBDT的结果是多有基模型的累加和。
+同时GBDT对异常值较为敏感。而随机森林却不敏感。
+
+Thinking6：基于邻域的协同过滤都有哪些算法，请简述原理
+A：基于邻域的协同过滤分配user_cf and item_cf
+具体的算法有KNNBasic、KNNWithMeans、KNNWithZScore、KNNBaseline等
+KNNBasic主要是根据用户u和用户v的相似度来估计r_ui
+KNNWithMeans主要是在用户u的平均打分上，再依据用户v和u的相似度来估计r_ui，用户v的分数也使用r_vi - v平均
+KNNWithZScore和Mean比，就是从mean转换到正态化
+KNNBaseline 考虑了用户打分的偏差（用户v对item-i的偏差？这个怎么理解？）
