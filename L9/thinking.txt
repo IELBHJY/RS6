@@ -1,0 +1,29 @@
+Thinking1：什么是近似最近邻查找，常用的方法有哪些?
+A:ANN，Approximate Nearest Neighbor，近似最近邻检索，在牺牲可接受范围内的精度的情况下提高检索效率。
+常用方法有LSH，MinHashLSH
+
+Thinking2：为什么两个集合的minhash值相同的概率等于这两个集合的Jaccard相似度?
+对应行分为三类数据：
+1：两列值均为1 （a行）
+2：两列值中只有一个为1 （b行）
+3：两列值均为0  （c行）
+因此,两列值minhash值相同的概率值等于 a/a+b，该值又恰好等于Jaccard
+所以，两个集合的minhash值相同的概率等于这两个集合的Jaccard相似度。
+
+Thinking3：SimHash在计算文档相似度的作用是怎样的？
+具体步骤：
+1、分词，把需要判断文本分词形成这个文章的特征单词。
+2、hash，通过hash算法把每个词变成hash值。
+3、加权，通过2步骤的hash生成结果，需要按照单词的权重形成加权数字串。
+4、合并，把上面各个单词算出来的序列值累加，变成只有一个序列串。
+5、降维，把4步算出来的结果变成 0 1 串，形成我们最终的simhash签名。
+6、 计算海明距离（Hamming distance），计算海明距就可以计算出两个simhash到底相似不相似。
+7、documents相似度 , 当我们算出所有doc的simhash值之后，需要计算doc A和doc B之间是否相似的条件是：A和B的海明距离是否小于等于n，这个n值根据经验。
+
+Thinking4：为什么YouTube采用期望观看时间作为评估指标?
+A：因为视频单纯靠点击与否并不能表示user的喜好，有些只是好奇看看，但是观看时间很短，这种就代表了对这类item不感兴趣
+所以评价指标采用观看时长。
+
+Thinking5：为什么YouTube在排序阶段没有采用经典的LR（逻辑回归）当作输出层，而是采用了Weighted Logistic Regression？
+A：观看时长不是只有0，1两种标签，所以YouTube采用了Weighted Logistic Regression来模拟这个输出
+
